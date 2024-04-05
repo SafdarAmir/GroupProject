@@ -27,13 +27,14 @@ if (isset($_POST['submit'])){
     $username = htmlspecialchars($_POST['username']);  // Input validation and output encoding
     $password = htmlspecialchars($_POST['password']);  // Input validation and output encoding
 
-    // Fetch hashed password from database
-    $query = "SELECT * FROM users WHERE username='$username' AND user_type='librarian'";
-    $result = mysqli_query($link, $query) or die(mysqli_error($link));
-    $num_row = mysqli_num_rows($result);
-    $row = mysqli_fetch_array($result);
+    // Prepare and bind parameters to prevent SQL injection
+    $stmt = $link->prepare("SELECT * FROM users WHERE username=? AND user_type='librarian'");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
 
-    if ($num_row > 0 && password_verify($password, $row['password'])) {
+    if ($result->num_rows > 0 && password_verify($password, $row['password'])) {
         logDetails("Successful login for username: $username");
         $_SESSION['id'] = $row['user_id'];
 
@@ -44,7 +45,8 @@ if (isset($_POST['submit'])){
         exit;
     } else {
         logDetails("Failed login attempt for username: $username");
-        $error = true;
+        header('location:error.php');  // Redirect to error page
+        exit;
     }
 }
 
@@ -56,7 +58,7 @@ if (isset($_POST['verify'])) {
         exit;
     } else {
         logDetails("Incorrect CAPTCHA answer");
-        header('location:error.php');  // Redirect to error page
+        header('location:error_captcha.php');  // Redirect to error page
         exit;
     }
 }
@@ -71,7 +73,7 @@ if (isset($_POST['verify'])) {
                 </div>
                 <div class="login">
                     <div class="log_txt">
-                        <p><strong>Please Enter the Details Below..</strong></p>
+                        <p><strong>Dear Librarian, Please Enter the Details Below..</strong></p>
                     </div>
                     <form class="form-horizontal" method="POST">
                         <div class="control-group">

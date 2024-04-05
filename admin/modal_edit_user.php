@@ -1,7 +1,7 @@
 <div id="edit<?php echo htmlspecialchars($id); ?>" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-body">
         <div class="alert alert-info"><strong>Edit User</strong></div>
-        <form class="form-horizontal" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <form class="form-horizontal" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" id="editUserForm">
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Username</label>
                 <div class="controls">
@@ -30,7 +30,7 @@
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Email</label>
                 <div class="controls">
-                    <input type="text" id="inputEmail" name="email" value="<?php echo htmlspecialchars($row['email']); ?>" required>
+                    <input type="email" id="emailInput" name="email" value="<?php echo htmlspecialchars($row['email']); ?>" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}">
                 </div>
             </div>
             <div class="control-group">
@@ -40,7 +40,7 @@
                         <option value=""></option>
                         <option value="admin" <?php echo ($row['user_type'] == 'admin') ? 'selected' : ''; ?>>admin</option>
                         <option value="librarian" <?php echo ($row['user_type'] == 'librarian') ? 'selected' : ''; ?>>librarian</option>
-						<option value="member" <?php echo ($row['user_type'] == 'member') ? 'selected' : ''; ?>>member</option>
+                        <option value="member" <?php echo ($row['user_type'] == 'member') ? 'selected' : ''; ?>>member</option>
                     </select>
                 </div>
             </div>

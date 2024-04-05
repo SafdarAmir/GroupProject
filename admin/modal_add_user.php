@@ -9,6 +9,12 @@ if (isset($_POST['submit'])){
     $email = htmlspecialchars($_POST['email']);
     $user_type = htmlspecialchars($_POST['user_type']);
 
+    // Validate email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        header('location:error.php');  // Redirect to custom error page
+        exit;
+    }
+
     // Hash the password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
@@ -34,7 +40,7 @@ if (isset($_POST['submit'])){
 <div id="add_user" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-body">
         <div class="alert alert-info"><strong>Add User</strong></div>
-        <form class="form-horizontal" method="post">
+        <form class="form-horizontal" method="post" id="addUserForm">
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Username</label>
                 <div class="controls">
@@ -62,7 +68,7 @@ if (isset($_POST['submit'])){
             <div class="control-group">
                 <label class="control-label" for="inputEmail">Email</label>
                 <div class="controls">
-                    <input type="text" id="inputEmail" name="email" placeholder="email" required>
+                    <input type="email" id="emailInput" name="email" placeholder="Email" required>
                 </div>
             </div>
             <div class="control-group">

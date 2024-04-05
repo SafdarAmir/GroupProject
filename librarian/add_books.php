@@ -1,6 +1,13 @@
 <?php include('header.php'); ?>
 <?php include('session.php'); ?>
-<?php include('navbar_books.php'); ?>
+<?php include('navbar_books.php');
+
+// Function to prevent SQL Injection
+function mysqliPrep($value) {
+    global $link;
+    return mysqli_real_escape_string($link, $value);
+}
+?>
     <div class="container">
 		<div class="margin-top">
 			<div class="row">	

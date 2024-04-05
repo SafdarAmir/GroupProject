@@ -35,17 +35,25 @@
                     </thead>
                     <tbody>
                         <?php
-                        $user_query = mysqli_query($link, "select * from users") or die(mysqli_error($link));
-                        while ($row = mysqli_fetch_array($user_query)) {
-                            $id = $row['user_id'];
+                        $user_query = mysqli_prepare($link, "SELECT * FROM users");
+                        mysqli_stmt_execute($user_query);
+                        $result = mysqli_stmt_get_result($user_query);
+
+                        while ($row = mysqli_fetch_array($result)) {
+                            $id = htmlspecialchars($row['user_id']);
+                            $username = htmlspecialchars($row['username']);
+                            $firstname = htmlspecialchars($row['firstname']);
+                            $lastname = htmlspecialchars($row['lastname']);
+                            $email = htmlspecialchars($row['email']);
+                            $user_type = htmlspecialchars($row['user_type']);
                         ?>
                             <tr class="del<?php echo $id ?>">
-                                <td><?php echo $row['username']; ?></td>
+                                <td><?php echo $username; ?></td>
                                 <td>*******</td> <!-- Replaced with asterisks for password -->
-                                <td><?php echo $row['firstname']; ?></td>
-                                <td><?php echo $row['lastname']; ?></td>
-                                <td><?php echo $row['email']; ?></td>
-                                <td><?php echo $row['user_type']; ?></td>
+                                <td><?php echo $firstname; ?></td>
+                                <td><?php echo $lastname; ?></td>
+                                <td><?php echo $email; ?></td>
+                                <td><?php echo $user_type; ?></td>
                                 <td width="100">
                                     <a rel="tooltip" title="Delete" id="<?php echo $id; ?>" href="delete_user.php?id=<?php echo $id; ?>" class="btn btn-danger"><i class="icon-trash icon-large"></i></a>
                                     <a rel="tooltip" title="Edit" id="e<?php echo $id; ?>" href="#edit<?php echo $id; ?>" data-toggle="modal" class="btn btn-success"><i class="icon-pencil icon-large"></i></a>
@@ -71,6 +79,17 @@
                                     }
                                 });
                             } else {
+                                return false;
+                            }
+                        });
+
+                        // Email validation
+                        $('#email').on('input', function() {
+                            var email = $(this).val();
+                            var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+                            if (!pattern.test(email)) {
+                                alert('Please enter a valid email address');
+                                $(this).val('');
                                 return false;
                             }
                         });

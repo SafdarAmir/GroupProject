@@ -34,12 +34,14 @@ if (isset($_POST['submit'])) {
         exit;
     }
 
-    $query = "SELECT * FROM users WHERE username='$username' AND user_type = 'admin'";
-    $result = mysqli_query($link, $query) or die(mysqli_error($link));
-    $num_row = mysqli_num_rows($result);
-    $row = mysqli_fetch_array($result);
+    // RBAC
+    $stmt = $link->prepare("SELECT * FROM users WHERE username=? AND user_type = 'admin'");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
 
-    if ($num_row > 0 && password_verify($password, $row['password'])) {
+    if ($result->num_rows > 0 && password_verify($password, $row['password'])) {
         logDetails("Successful login for username: $username");
         $_SESSION['id'] = $row['user_id'];
 
@@ -63,11 +65,11 @@ if (isset($_POST['verify'])) {
         exit;
     } else {
         logDetails("Incorrect CAPTCHA answer");
-        header('location:error.php');  // Redirect to custom error page
+        header('location:error_captcha.php');  // Redirect to custom error page
         exit;
     }
-        
 }
+
 ?>
 
 <div class="libraryiner">
@@ -79,7 +81,7 @@ if (isset($_POST['verify'])) {
                 </div>
                 <div class="login">
                     <div class="log_txt">
-                        <p><strong>Please Enter the Details Below..</strong></p>
+                        <p><strong>Dear Admin, Please Enter the Details Below..</strong></p>
                     </div>
                     <form class="form-horizontal" method="POST">
                         <div class="control-group">
